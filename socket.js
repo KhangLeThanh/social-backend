@@ -7,7 +7,7 @@ function initSocket(server) {
   io = new Server(server, {
     cors: {
       origin: "http://localhost:3001",
-      methods: ["GET", "POST"],
+      methods: ["GET", "POST", "PATCH", "DELETE"],
       credentials: true,
     },
   });
