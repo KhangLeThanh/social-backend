@@ -48,6 +48,7 @@ const updatePost = async (req, res) => {
       "UPDATE posts SET content = $1 WHERE id = $2 RETURNING *",
       [content, postId]
     );
+    getIO().emit("post_status", result.rows[0]);
     res.status(200).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
