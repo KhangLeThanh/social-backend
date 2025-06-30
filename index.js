@@ -23,6 +23,8 @@ const authRoutes = require("./routes/auth");
 const postRoutes = require("./routes/posts");
 const commentRoutes = require("./routes/comments");
 const logoutRoutes = require("./routes/logout");
+const chatRoutes = require("./routes/chats");
+const messageRoutes = require("./routes/messages");
 
 // Mount routes BEFORE catch-all OPTIONS
 app.use("/api/users", userRoutes);
@@ -30,6 +32,8 @@ app.use("/api/login", authRoutes);
 app.use("/api/logout", logoutRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/chats", chatRoutes);
+app.use("/api/messages", messageRoutes);
 
 // Root route
 app.get("/", (req, res) => {
