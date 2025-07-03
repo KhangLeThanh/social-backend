@@ -32,6 +32,8 @@ const createPost = async (req, res) => {
       "INSERT INTO posts (content, user_id) VALUES ($1, $2) RETURNING *",
       [content, userId]
     );
+    getIO().emit("post_status", result.rows[0]);
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -6,7 +6,7 @@ const createMessage = async (req, res) => {
 
   try {
     const result = await pool.query(
-      "INSERT INTO messages (content, user_id, chat_id) VALUES ($1, $2, $3) RETURNING *",
+      "INSERT INTO messages (content, sender_id, chat_id) VALUES ($1, $2, $3) RETURNING *",
       [content, userId, chatId]
     );
     getIO().emit("message_status", result.rows[0]);
@@ -18,14 +18,13 @@ const createMessage = async (req, res) => {
 };
 
 const getMessage = async (req, res) => {
-  const { chatId } = req.body;
+  const { chatId } = req.params;
 
   try {
     const result = await pool.query(
-      "SELECT * FROM messages WHERE chat_id = $1 ORDER BY created_at ASC;",
+      'SELECT messages.id, messages.chat_id as "chatId", messages.sender_id as "senderId", messages.content, messages.created_at AS "createdAt", users.username FROM messages JOIN users ON messages.sender_id = users.id WHERE chat_id = $1 ORDER BY created_at ASC;',
       [chatId]
     );
-    getIO().emit("message_status", result.rows);
 
     res.status(200).json(result.rows);
   } catch (err) {
