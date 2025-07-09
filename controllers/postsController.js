@@ -25,8 +25,6 @@ const getPost = async (req, res) => {
   }
 };
 const getPersonalPost = async (req, res) => {
-  console.log("test userId");
-
   const { userId } = req.query;
 
   if (!userId) {
@@ -57,7 +55,7 @@ const getPersonalPost = async (req, res) => {
 
     res.json(result.rows);
   } catch (err) {
-    console.error("❌ getPersonalPost error:", err.message);
+    console.error("getPersonalPost error:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
