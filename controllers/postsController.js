@@ -24,13 +24,51 @@ const getPost = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+const getPersonalPost = async (req, res) => {
+  console.log("test userId");
+
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Missing userId in query params" });
+  }
+
+  const userIdNum = Number(userId);
+  if (isNaN(userIdNum)) {
+    return res.status(400).json({ error: "Invalid userId" });
+  }
+  try {
+    const result = await pool.query(
+      `SELECT 
+         posts.id, 
+         posts.user_id AS "userId",
+         posts.post_user_id AS "postUserId", 
+         posts.content, 
+         posts.created_at AS "createdAt", 
+         author.username AS "authorUsername",
+         receiver.username AS "receiverUsername"
+       FROM posts
+       JOIN users AS author ON posts.user_id = author.id
+       JOIN users AS receiver ON posts.post_user_id = receiver.id
+       WHERE posts.user_id = $1 OR posts.post_user_id = $1
+       ORDER BY posts.created_at DESC`,
+      [userIdNum]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("❌ getPersonalPost error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 const createPost = async (req, res) => {
-  const { content, userId } = req.body;
+  const { content, userId, postUserId } = req.body;
 
   try {
     const result = await pool.query(
-      "INSERT INTO posts (content, user_id) VALUES ($1, $2) RETURNING *",
-      [content, userId]
+      "INSERT INTO posts (content, user_id, post_user_id) VALUES ($1, $2, $3) RETURNING *",
+      [content, userId, postUserId]
     );
     getIO().emit("post_status", result.rows[0]);
 
@@ -75,4 +113,11 @@ const deletePost = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-module.exports = { getPosts, createPost, updatePost, deletePost, getPost };
+module.exports = {
+  getPosts,
+  createPost,
+  updatePost,
+  deletePost,
+  getPost,
+  getPersonalPost,
+};
