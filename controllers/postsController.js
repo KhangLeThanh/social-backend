@@ -111,6 +111,42 @@ const deletePost = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+const getProfilePosts = async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Missing userId in query params" });
+  }
+
+  const userIdNum = Number(userId);
+  if (isNaN(userIdNum)) {
+    return res.status(400).json({ error: "Invalid userId" });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT 
+         posts.id, 
+         posts.user_id AS "userId",
+         posts.post_user_id AS "postUserId", 
+         posts.content, 
+         posts.created_at AS "createdAt", 
+         author.username AS "authorUsername",
+         receiver.username AS "receiverUsername"
+       FROM posts
+       JOIN users AS author ON posts.user_id = author.id
+       JOIN users AS receiver ON posts.post_user_id = receiver.id
+       WHERE posts.post_user_id = $1
+       ORDER BY posts.created_at DESC`,
+      [userIdNum]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("getProfilePosts error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
 module.exports = {
   getPosts,
   createPost,
@@ -118,4 +154,5 @@ module.exports = {
   deletePost,
   getPost,
   getPersonalPost,
+  getProfilePosts,
 };
