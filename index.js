@@ -25,6 +25,7 @@ const commentRoutes = require("./routes/comments");
 const logoutRoutes = require("./routes/logout");
 const chatRoutes = require("./routes/chats");
 const messageRoutes = require("./routes/messages");
+const friendRequestRoutes = require("./routes/friends");
 
 // Mount routes BEFORE catch-all OPTIONS
 app.use("/api/users", userRoutes);
@@ -34,6 +35,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/friend-request", friendRequestRoutes);
 
 // Root route
 app.get("/", (req, res) => {
