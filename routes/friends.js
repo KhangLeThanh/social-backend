@@ -3,7 +3,7 @@ const router = express.Router();
 
 const {
   sendFriendRequest,
-  getFriendRequest,
+  getAcceptedFriend,
   getFriendShip,
   acceptfriendRequest,
   cancelfriendRequest,
@@ -12,7 +12,7 @@ const authenticateUser = require("../middleware/authMiddleware");
 
 router.post("/", authenticateUser, sendFriendRequest);
 router.get("/friend-ship/:userId/:profileId", authenticateUser, getFriendShip);
-router.get("/:userId", authenticateUser, getFriendRequest);
+router.get("/:userId", authenticateUser, getAcceptedFriend);
 router.patch("/:requestId", authenticateUser, acceptfriendRequest);
 router.delete("/:requestId", authenticateUser, cancelfriendRequest);
 

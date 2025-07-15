@@ -1,7 +1,7 @@
 const pool = require("../db");
 const { getIO } = require("../socket");
 
-const getFriendRequest = async (req, res) => {
+const getAcceptedFriend = async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -87,7 +87,7 @@ const getFriendShip = async (req, res) => {
 };
 module.exports = {
   sendFriendRequest,
-  getFriendRequest,
+  getAcceptedFriend,
   getFriendShip,
   cancelfriendRequest,
   acceptfriendRequest,
