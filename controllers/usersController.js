@@ -41,4 +41,20 @@ const createUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-module.exports = { getUsers, createUser, getUser };
+
+const searchUser = async (req, res) => {
+  const { userName } = req.query;
+  if (!userName) {
+    return res.status(400).json({ error: "Missing query parameter" });
+  }
+  try {
+    const result = await pool.query(
+      "SELECT id, username FROM users WHERE username ILIKE $1",
+      [`${userName}%`]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+module.exports = { getUsers, createUser, getUser, searchUser };
