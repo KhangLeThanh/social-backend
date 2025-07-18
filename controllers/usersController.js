@@ -43,18 +43,26 @@ const createUser = async (req, res) => {
 };
 
 const searchUser = async (req, res) => {
-  const { userName } = req.query;
+  const { userName, limit, offset } = req.query;
   if (!userName) {
     return res.status(400).json({ error: "Missing query parameter" });
   }
   try {
-    const result = await pool.query(
-      "SELECT id, username FROM users WHERE username ILIKE $1",
-      [`${userName}%`]
-    );
+    if (!limit) {
+      result = await pool.query(
+        "SELECT id, username FROM users WHERE username ILIKE $1",
+        [`${userName}%`]
+      );
+    } else {
+      result = await pool.query(
+        "SELECT id, username FROM users WHERE username ILIKE $1 LIMIT $2 OFFSET $3",
+        [`${userName}%`, parseInt(limit), parseInt(offset)]
+      );
+    }
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 module.exports = { getUsers, createUser, getUser, searchUser };
